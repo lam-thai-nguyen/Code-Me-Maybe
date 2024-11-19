@@ -1,0 +1,702 @@
+% ===Lesson 8: Tables
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{verbatim}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{siunitx}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{threeparttable}
+
+\begin{document}
+This lesson shows how you can build tables in LaTeX, influence the alignment of the cells, add rules to the table, and merge cells.
+\vspace{0.5cm}
+
+Tables in LaTeX are set using the \verb|tabular| environment. This lesson will assume you load the \texttt{array} package, which adds more functionality to LaTeX tables, and which is not built into the LaTeX kernel only for historic reasons. So put the following in your preamble and we’re good to go:
+
+\begin{verbatim}
+    \usepackage{array}
+\end{verbatim}
+
+In order to typeset a tabular we have to tell LaTeX how many columns will be needed and how they should be aligned. This is done in a mandatory argument – often referred to as the table preamble – to the \texttt{tabular} environment, in which you specify the columns by using \textbf{single-letter names}, called preamble-tokens. The available column types are:
+
+\begin{itemize}
+    \item \texttt{l}:	left aligned column
+    \item \texttt{c}:	centered column
+    \item \texttt{r}:	right aligned column
+    \item \texttt{p\{width\}}: a column with fixed width width; the text will be automatically line wrapped and fully justified
+    \item \texttt{m\{width\}}: like p, but vertically centered compared to the rest of the row
+    \item \texttt{b\{width\}}: like p, but bottom aligned
+    \item \texttt{w\{align\}\{width\}}: prints the contents with a fixed width, silently overprinting if things get larger. You can choose the horizontal alignment using l, c, or r.
+    \item \texttt{W\{align\}\{width\}}: like w, but this will issue an overfull box warning if things get too wide.
+\end{itemize}
+
+In addition, a few other \textbf{preamble-tokens} are available which don’t define a column but might be useful as well:
+
+\begin{itemize}
+    \item \texttt{*\{num\}\{string\}}: repeats string for num times in the preamble. With this you can define multiple identical columns.
+    \item \texttt{\>\{decl\}}: this will put decl before the contents of every cell in the following column (this is useful, e.g., to set a different font for this column)
+    \item \texttt{<\{decl\}}: this will put decl after the contents of each cell in the previous column
+    \item \texttt{|}: add a vertical rule
+    \item \texttt{@\{decl\}}: replace the space between two columns with decl
+    \item \texttt{!\{decl\}}: add decl in the center of the existing space
+\end{itemize}
+
+The columns l, c, and r will have the natural width of the widest cell. Each column has to be declared, so if you want three centered columns, you’d use ccc in the table preamble. Spaces are ignored, so c c c is the same.
+
+In a table body columns are separated using an ampersand \texttt{\&} and a new row is started using \verb|\\|.
+
+We have everything we need for our first table. In the following code the \verb|&| and \verb|\\| are aligned. This isn’t necessary in LaTeX, but helps reading the source.
+
+\begin{verbatim}
+\begin{tabular}{lll}
+  Animal & Food  & Size   \\
+  dog    & meat  & medium \\
+  horse  & hay   & large  \\
+  frog   & flies & small  \\
+\end{tabular}
+\end{verbatim}
+
+If a table column contains a lot of text you will have issues to get that right with only l, c, and r. See what happens in the following example:
+
+\begin{verbatim}
+\begin{tabular}{cl}
+  Animal & Description \\
+  dog    & The dog is a member of the genus Canis, which forms part of the
+           wolf-like canids, and is the most widely abundant terrestrial
+           carnivore. \\
+  cat    & The cat is a domestic species of small carnivorous mammal. It is the
+           only domesticated species in the family Felidae and is often referred
+           to as the domestic cat to distinguish it from the wild members of the
+           family. \\
+\end{tabular}
+\end{verbatim}
+
+The issue is that the \texttt{l} type column typesets its contents \textbf{in a single row} at its natural width, even if there is a page border in the way. To overcome this you can use the \texttt{p} column. This typesets its contents as paragraphs with the width you specify as an argument and vertically aligns them at the top – which you’ll want most of the time. Compare the above outcome to the following:
+
+\begin{verbatim}
+\begin{tabular}{cp{9cm}}
+  Animal & Description \\
+  dog    & The dog is a member of the genus Canis, which forms part of the
+           wolf-like canids, and is the most widely abundant terrestrial
+           carnivore. \\
+  cat    & The cat is a domestic species of small carnivorous mammal. It is the
+           only domesticated species in the family Felidae and is often referred
+           to as the domestic cat to distinguish it from the wild members of the
+           family. \\
+\end{tabular}
+\end{verbatim}
+
+If your table has many columns of the same type it is cumbersome to put that many column definitions in the preamble. You can make things easier by using \verb|*{num}{string}|, which repeats the string num times. So \verb|*{6}{c}| is equivalent to \verb|cccccc|. To show you that it works here is the first table of this lesson with the newly learned syntax:
+
+\begin{verbatim}
+\begin{tabular}{*{3}{l}}
+  Animal & Food  & Size   \\
+  dog    & meat  & medium \\
+  horse  & hay   & large  \\
+  frog   & flies & small  \\
+\end{tabular}
+\end{verbatim}
+
+\begin{tabular}{*{3}{l}}
+  Animal & Food  & Size   \\
+  dog    & meat  & medium \\
+  horse  & hay   & large  \\
+  frog   & flies & small  \\
+\end{tabular}
+
+\section{Adding rules (lines)}
+
+A word of advice prior to introducing rules: lines should be used really sparsely in tables, and normally vertical ones look \textbf{unprofessional}. In fact, for professional tables you shouldn’t use any of the standard lines; instead you should get familiar with the facilities of the \verb|booktabs| package, which is why it is covered here first. For the sake of completeness the standard lines are shown in the more-info page.
+
+\verb|booktabs| provides four different types of lines. Each of those commands has to be used as the first thing in a row or following another rule. Three of the rule commands are: \verb|\toprule|, \verb|\midrule|, and \verb|\bottomrule|. From their names the intended place of use should be clear:
+
+\begin{verbatim}
+\begin{tabular}{lll}
+  \toprule
+  Animal & Food  & Size   \\
+  \midrule
+  dog    & meat  & medium \\
+  horse  & hay   & large  \\
+  frog   & flies & small  \\
+  \bottomrule
+\end{tabular}
+\end{verbatim}
+
+\begin{tabular}{lll}
+  \toprule
+  Animal & Food  & Size   \\
+  \midrule
+  dog    & meat  & medium \\
+  horse  & hay   & large  \\
+  frog   & flies & small  \\
+  \bottomrule
+\end{tabular}
+\vspace{0.5cm}
+
+The fourth rule command provided by booktabs is \verb|\cmidrule|. It can be used to draw a rule that doesn’t span the entire width of the table but only a specified column range. A column range is entered as a number span: \verb|{number-number}|. Even if you only want to draw the rule for a single column you need to specify that as a range (with both numbers matching).
+
+\begin{verbatim}
+\begin{tabular}{lll}
+  \toprule
+  Animal & Food  & Size   \\
+  \midrule
+  dog    & meat  & medium \\
+  \cmidrule{1-2}
+  horse  & hay   & large  \\
+  \cmidrule{1-1}
+  \cmidrule{3-3}
+  frog   & flies & small  \\
+  \bottomrule
+\end{tabular}
+\end{verbatim}
+
+\begin{tabular}{lll}
+  \toprule
+  Animal & Food  & Size   \\
+  \midrule
+  dog    & meat  & medium \\
+  \cmidrule{1-2}
+  horse  & hay   & large  \\
+  \cmidrule{1-1}
+  \cmidrule{3-3}
+  frog   & flies & small  \\
+  \bottomrule
+\end{tabular}
+\vspace{0.5cm}
+
+Sometimes a rule would be too much of a separation for two rows but to get across the meaning more clearly you want to separate them by some means. In this case you can use \verb|\addlinespace| to insert a small skip.
+
+\begin{verbatim}
+\begin{tabular}{cp{9cm}}
+  \toprule
+  Animal & Description \\
+  \midrule
+  dog    & The dog is a member of the genus Canis, which forms part of the
+           wolf-like canids, and is the most widely abundant terrestrial
+           carnivore. \\
+  \addlinespace
+  cat    & The cat is a domestic species of small carnivorous mammal. It is the
+           only domesticated species in the family Felidae and is often referred
+           to as the domestic cat to distinguish it from the wild members of the
+           family. \\
+  \bottomrule
+\end{tabular}
+\end{verbatim}
+
+\begin{tabular}{cp{9cm}}
+  \toprule
+  Animal & Description \\
+  \midrule
+  dog    & The dog is a member of the genus Canis, which forms part of the
+           wolf-like canids, and is the most widely abundant terrestrial
+           carnivore. \\
+  \addlinespace
+  cat    & The cat is a domestic species of small carnivorous mammal. It is the
+           only domesticated species in the family Felidae and is often referred
+           to as the domestic cat to distinguish it from the wild members of the
+           family. \\
+  \bottomrule
+\end{tabular}
+
+\section{Merging cells}
+In LaTeX you can merge cells horizontally by using the \verb|\multicolumn| command. It has to be used as the first thing in a cell. \verb|\multicolumn| takes three arguments:
+
+\begin{itemize}
+    \item The number of cells which should be merged
+    \item The alignment of the merged cell
+    \item The contents of the merged cell
+\end{itemize}
+
+\begin{verbatim}
+\begin{tabular}{lll}
+  \toprule
+  Animal & Food  & Size   \\
+  \midrule
+  dog    & meat  & medium \\
+  horse  & hay   & large  \\
+  frog   & flies & small  \\
+  fuath  & \multicolumn{2}{c}{unknown} \\
+  \bottomrule
+\end{tabular}
+\end{verbatim}
+
+Merging cells vertically isn’t supported by LaTeX. Usually it suffices to leave cells empty to give the reader the correct idea of what was meant without explicitly making cells span rows.
+
+\begin{verbatim}
+\begin{tabular}{lll}
+  \toprule
+  Group     & Animal & Size   \\
+  \midrule
+  herbivore & horse  & large  \\
+            & deer   & medium \\
+            & rabbit & small  \\
+  \addlinespace
+  carnivore & dog    & medium \\
+            & cat    & small  \\
+            & lion   & large  \\
+  \addlinespace
+  omnivore  & crow   & small  \\
+            & bear   & large  \\
+            & pig    & medium \\
+  \bottomrule
+\end{tabular}
+\end{verbatim}
+
+\begin{tabular}{lll}
+  \toprule
+  Group     & Animal & Size   \\
+  \midrule
+  herbivore & horse  & large  \\
+            & deer   & medium \\
+            & rabbit & small  \\
+  \addlinespace
+  carnivore & dog    & medium \\
+            & cat    & small  \\
+            & lion   & large  \\
+  \addlinespace
+  omnivore  & crow   & small  \\
+            & bear   & large  \\
+            & pig    & medium \\
+  \bottomrule
+\end{tabular}
+
+\section{Exercises}
+Use the simple table example to start experimenting with tables. Try out different alignments using the l, c and r column types. What happens if you have too few items in a table row? How about too many? Experiment with the \verb|\multicolumn| command to span across columns.
+
+\vspace{0.5cm}
+\begin{tabular}{*{7}{c}}
+     \toprule
+     Mon & Tue & Wed & Thu & Fri & Sat & Sun \\
+     \midrule
+     Exercise & Work & Work & None & Work & Exercise & None \\ 
+     Exercise & \multicolumn{2}{c}{Work} & None & Work & Exercise & None \\ 
+     \multicolumn{7}{r}{Learn to play Music} \\
+\end{tabular}
+
+\section{More on this topic}
+\subsection{The other preamble contents}
+As the lesson didn’t cover all the available preamble-tokens, a few others are explained with examples here. You might want to revisit the tables at the start of the lesson to get an overview of the things available. The short descriptions provided there should suffice to understand what the different column types m, b, w, and W do after you understood l, c, r, and p. If not you might want to experiment a bit with them. What’s still missing are the handy other preamble-tokens \textbf{>, <, @, !, and |}.
+
+\subsection{Styling a column}
+Since > and < can be used to put things before and after the cell contents of a column, you can use these to add commands which affect the look of a column. For instance, if you want to italicize the first column and put a colon after it, you can do the following:
+
+\begin{verbatim}
+\begin{tabular}{>{\itshape}l<{:} *{2}{l}}
+  \toprule
+  Animal & Food  & Size   \\
+  \midrule
+  dog    & meat  & medium \\
+  horse  & hay   & large  \\
+  frog   & flies & small  \\
+  \bottomrule
+\end{tabular}
+\end{verbatim}
+
+\begin{tabular}{>{\itshape}l<{:} *{2}{l}}
+  \toprule
+  Animal & Food  & Size   \\
+  \midrule
+  dog    & meat  & medium \\
+  horse  & hay   & large  \\
+  frog   & flies & small  \\
+  \bottomrule
+\end{tabular}
+
+You may want the first cell not to be affected because it is the table head. Here \verb|\multicolumn| may be used. Remember that it can be used to change a single cell’s alignment as shown below.
+
+\begin{verbatim}
+\begin{tabular}{>{\itshape}l<{:} *{2}{l}}
+  \toprule
+  \multicolumn{1}{l}{Animal} & Food  & Size   \\
+  \midrule
+  dog    & meat  & medium \\
+  horse  & hay   & large  \\
+  frog   & flies & small  \\
+  \bottomrule
+\end{tabular}
+\end{verbatim}
+
+\subsection{Manipulating the space between columns}
+Usually LaTeX pads each column by some space on both sides to give a balanced look and separate them. This space is defined with the length \verb|\tabcolsep|. Due to the fact that each column is padded on both sides you get one \verb|\tabcolsep| on either end of the table, and \verb|2\tabcolsep| between two columns – one from each column. You can adjust this space to any length using \verb|\setlength|:
+
+\begin{verbatim}
+\setlength\tabcolsep{1cm}
+
+\begin{document}
+\begin{tabular}{lll}
+  Animal & Food  & Size   \\
+  dog    & meat  & medium \\
+  horse  & hay   & large  \\
+  frog   & flies & small  \\
+\end{tabular}
+\end{document}
+\end{verbatim}
+
+\subsection{Vertical rules}
+Sometimes you have to use vertical rules.
+
+\begin{verbatim}
+\begin{tabular}{l|ll}
+  Animal & Food  & Size   \\[2pt] 
+  dog    & meat  & medium \\
+  horse  & hay   & large  \\
+  frog   & flies & small  \\
+\end{tabular}
+
+\begin{tabular}{l!{|}ll}
+  Animal & Food  & Size   \\[2pt] 
+  dog    & meat  & medium \\
+  horse  & hay   & large  \\
+  frog   & flies & small  \\
+\end{tabular}
+\end{verbatim}
+
+You might notice that the behavior of \verb||| is pretty similar to \verb|!{decl}|; it adds the vertical rule between two columns leaving the padding as it is. There is a huge downside to this though; vertical rules don’t work with the horizontal rules provided by \verb|booktabs|. You can use the horizontal rules provided by LaTeX; those are \verb|\hline| (corresponding to \verb|\toprule|, \verb|\midrule|, and \verb|\bottomrule|) and \verb|\cline| (which behaves like \verb|\cmidrule|). As shown above, vertical rules will span any space specified in the optional argument to \verb|\\|.
+
+\subsection{Customizing booktabs rules}
+All the \verb|booktabs| rules and also \verb|\addlinespace| support an optional argument in brackets with which you can specify the rule’s thickness. In addition the trimming provided by \verb|\cmidrule| can be customized by specifying a length in braces after r or l.
+
+\begin{verbatim}
+\begin{tabular}{@{} lll@{}} \toprule[2pt]
+  Animal & Food  & Size   \\ \midrule[1pt]
+  dog    & meat  & medium \\
+  \cmidrule[0.5pt](r{1pt}l{1cm}){1-2}
+  horse  & hay   & large  \\
+  frog   & flies & small  \\ \bottomrule[2pt]
+\end{tabular}
+\end{verbatim}
+
+\begin{tabular}{@{} lll@{}} \toprule[2pt]
+  Animal & Food  & Size   \\ \midrule[1pt]
+  dog    & meat  & medium \\
+  \cmidrule[0.5pt](r{1pt}l{1cm}){1-2}
+  horse  & hay   & large  \\
+  frog   & flies & small  \\ \bottomrule[2pt]
+\end{tabular}
+\vspace{0.5cm}
+
+\subsection{Numeric alignment in columns}
+The alignment of numbers in tables can be handled by the column type S that is provided by the siunitx package.
+
+A simple example with two aligned numeric columns would be:
+
+\begin{verbatim}
+\usepackage{siunitx}
+\begin{document}
+\begin{tabular}{SS}
+\toprule
+{Values} &  {More Values} \\
+\midrule
+1        &   2.3456 \\
+1.2      &   34.2345 \\
+-2.3     &   90.473 \\
+40       &   5642.5 \\
+5.3      &   1.2e3 \\
+0.2      &    1e4 \\
+\bottomrule
+\end{tabular}
+\end{document}
+\end{verbatim}
+
+Note that any non-numeric cell must be “protected” by enclosing it in braces.
+\vspace{0.5cm}
+
+\begin{tabular}{SS}
+\toprule
+{Values} &  {More Values} \\
+\midrule
+1        &   2.3456 \\
+1.2      &   34.2345 \\
+-2.3     &   90.473 \\
+40       &   5642.5 \\
+5.3      &   1.2e3 \\
+0.2      &    1e4 \\
+\bottomrule
+\end{tabular}
+
+\subsection{Specifying the total table width}
+The width of a \verb|tabular| environment is automatically determined based on the contents of the table. There are two commonly used mechanisms to specify a different total width.
+
+Note that it is almost always preferable to format the table to a specified width as below (perhaps using a font size such as \verb|\small| if necessary) rather than scaling a table with \verb|\resizebox| and similar commands which will produce inconsistent font sizes and rule widths.
+
+\paragraph{\texttt{tabular*}} The \verb|tabular*| environment takes an additional width argument that specifies the total width of the table. Stretchy space must be added to the table using the \verb|\extracolsep| command. This space is added between all columns from that point in the preamble. It is almost always used with \verb|\fill|, a special space that stretches to be as large as necessary.
+
+\begin{verbatim}
+\begin{center}
+\begin{tabular}{cc}
+\hline
+A & B\\
+C & D\\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}  
+\begin{tabular*}{.5\textwidth}{@{\extracolsep{\fill}}cc@{}}
+\hline
+A & B\\
+C & D\\
+\hline
+\end{tabular*}
+\end{center}
+
+\begin{center}  
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}cc@{}}
+\hline
+A & B\\
+C & D\\
+\hline
+\end{tabular*}
+\end{center}
+\end{verbatim}
+
+\begin{center}
+\begin{tabular}{cc}
+\hline
+A & B\\
+C & D\\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}  
+\begin{tabular*}{.5\textwidth}{@{\extracolsep{\fill}}cc@{}}
+\hline
+A & B\\
+C & D\\
+\hline
+\end{tabular*}
+\end{center}
+
+\begin{center}  
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}cc@{}}
+\hline
+A & B\\
+C & D\\
+\hline
+\end{tabular*}
+\end{center}
+
+\newpage
+\paragraph{\texttt{tabularx}} The \verb|tabularx| environment, provided by the package of the same name, has a similar syntax to \verb|tabular*| but instead of adjusting the inter-column space, adjusts the widths of columns specified by a new column type, \verb|X|. This is equivalent to a specification of \verb|p{...}| for an automatically determined width.
+
+\begin{verbatim}
+\begin{center}
+\begin{tabular}{lp{2cm}}
+\hline
+A & B B B B B B B B B B B B B B B B B B B B B B B B\\
+C & D D D D D D D\\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}  
+\begin{tabularx}{.5\textwidth}{lX}
+\hline
+A & B B B B B B B B B B B B B B B B B B B B B B B B\\
+C & D D D D D D D\\
+\hline
+\end{tabularx}
+\end{center}
+
+\begin{center}  
+\begin{tabularx}{\textwidth}{lX}
+\hline
+A & B B B B B B B B B B B B B B B B B B B B B B B B\\
+C & D D D D D D D\\
+\hline
+\end{tabularx}
+\end{center}
+\end{verbatim}
+
+\begin{center}
+\begin{tabular}{lp{2cm}}
+\hline
+A & B B B B B B B B B B B B B B B B B B B B B B B B\\
+C & D D D D D D D\\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}  
+\begin{tabularx}{.5\textwidth}{lX}
+\hline
+A & B B B B B B B B B B B B B B B B B B B B B B B B\\
+C & D D D D D D D\\
+\hline
+\end{tabularx}
+\end{center}
+
+\begin{center}  
+\begin{tabularx}{\textwidth}{lX}
+\hline
+A & B B B B B B B B B B B B B B B B B B B B B B B B\\
+C & D D D D D D D\\
+\hline
+\end{tabularx}
+\end{center}
+
+\newpage
+\subsection{Multi-page tables}
+A \verb|tabular| forms an unbreakable box so it must be small enough to fit on one page, and is often placed in a floating \verb|table| environment.
+
+Several packages provide variants with similar syntax that do allow page breaking. Here we show the \verb|longtable| package:
+
+\begin{verbatim}
+\usepackage{longtable}
+\begin{document}
+\begin{longtable}{cc}
+\multicolumn{2}{c}{A Long Table}\\
+Left Side & Right Side\\
+\hline
+\endhead
+\hline
+\endfoot
+aa & bb\\  
+Entry & b\\  
+a & b\\  
+a & b\\  
+a & b\\  
+a & b\\  
+a & bbb\\  
+a & b\\  
+a & b\\  
+a & b\\  
+a & b\\  
+a & b\\  
+a & b\\  
+a & b b b b b b\\  
+a & b b b b b\\  
+a & b b\\  
+A Wider Entry & b\\  
+\end{longtable}
+
+\end{document}
+\end{verbatim}
+
+\begin{longtable}{cc}
+\multicolumn{2}{c}{A Long Table}\\
+Left Side & Right Side\\
+\hline
+\endhead
+\hline
+\endfoot
+aa & bb\\  
+Entry & b\\  
+a & b\\  
+a & b\\  
+a & b\\  
+a & b\\  
+a & bbb\\  
+a & b\\  
+a & b\\  
+a & b\\  
+a & b\\  
+a & b\\  
+a & b\\  
+a & b b b b b b\\  
+a & b b b b b\\  
+a & b b\\  
+A Wider Entry & b\\  
+\end{longtable}
+
+\verb|longtable| is notable in that it preserves the column widths over all pages of the table; however in order to achieve this it may take several runs of LaTeX so that wide entries encountered later in the table can affect the column widths in earlier pages.
+
+\subsection{Table notes}
+It is quite common to need footnote-like marks in a table referring to notes under the table. The \verb|threeparttable| package simplifies the markup for such tables, arranging that the notes are set in a block the same width as the table. Refer to the package documentation for full details, but we show a simple example here.
+
+\begin{verbatim}
+\begin{table}[h]
+\begin{threeparttable}
+   \caption{An Example}
+   \begin{tabular}{ll}
+   \toprule
+    An entry & 42\tnote{1}\\
+    Another entry & 24\tnote{2}\\
+   \bottomrule
+   \end{tabular}
+   \begin{tablenotes}
+   \item [1] the first note.
+   \item [2] the second note.
+   \end{tablenotes}
+\end{threeparttable}
+\end{table}
+\end{verbatim}
+
+\begin{table}[h]
+\begin{threeparttable}
+   \caption{An Example}
+   \begin{tabular}{ll}
+   \toprule
+    An entry & 42\tnote{1}\\
+    Another entry & 24\tnote{2}\\
+   \bottomrule
+   \end{tabular}
+   \begin{tablenotes}
+   \item [1] the first note.
+   \item [2] the second note.
+   \end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\subsection{Line spacing in tables}
+In the main lesson we demonstrated \verb|\addlinespace| from the \verb|booktabs| package, which is useful for adding extra space between specific lines.
+
+There are two general parameters that control line spacing, \verb|\arraystretch| and \verb|\extrarowheight| (the latter from the array package).
+
+\verb|\renewcommand\arraystretch{1.5}| will increase the baseline spacing by 50\%.
+
+\newpage
+Often, especially when using \verb|\hline|, it is better just to increase the height (\textbf{above}) of rows, without increasing their depth below the baseline. The following example demonstrates the \verb|\extrarowheight| parameter.
+
+\begin{verbatim}
+\begin{center}
+\begin{tabular}{cc}
+\hline
+Square& $x^2$\\
+\hline
+Cube& $x^3$\\
+\hline
+\end{tabular}
+\end{center}
+
+
+\begin{center}
+\setlength\extrarowheight{2pt}
+\begin{tabular}{cc}
+\hline
+Square& $x^2$\\
+\hline
+Cube& $x^3$\\
+\hline
+\end{tabular}
+\end{center}
+\end{verbatim}
+
+\begin{center}
+\begin{tabular}{cc}
+\hline
+Square& $x^2$\\
+\hline
+Cube& $x^3$\\
+\hline
+\end{tabular}
+\end{center}
+
+
+\begin{center}
+\setlength\extrarowheight{2pt}
+\begin{tabular}{cc}
+\hline
+Square& $x^2$\\
+\hline
+Cube& $x^3$\\
+\hline
+\end{tabular}
+\end{center}
+
+\end{document}
+% End Lesson 8 (Nov 3 2024)===

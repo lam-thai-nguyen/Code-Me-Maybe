@@ -1,0 +1,77 @@
+% ===Lesson 6: Extending LaTeX
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{verbatim}
+
+% Toggle these to see the effect. The standard hyphenation rules are US English.
+% FYI: Hyphenation is the process of using a hyphen to join words or separate syllables
+% \usepackage[french]{babel} 
+% \usepackage[width = 6cm]{geometry} % To force hyphenation here
+
+% Toggle this to see the geometry effect
+\usepackage[margin=1in]{geometry}
+
+% Toggle this to see the effect
+\usepackage{xcolor}
+\newcommand\kw[1]{\textbf{\itshape #1}}
+\newcommand\blue[1]{\textcolor{blue}{\itshape #1}}
+
+% Toggle this to see the effect
+\newcommand{\greencode}[1]{\textcolor{teal}{\texttt{#1}}}
+\newcommand{\printerror}{\textcolor{red}{ERROR}}
+
+\begin{document}
+This lesson shows how you can extend LaTeX to your needs and change its layout further by using packages and definitions. It also shows how you can define your own commands.
+
+\vspace{0.5cm}
+
+After having declared a class, in the preamble you can modify functionality in LaTeX by adding one or more packages. These can
+
+\begin{itemize}
+    \item Change how some parts of LaTeX work
+    \item Add new commands to LaTeX
+    \item Change document design
+\end{itemize}
+
+\section{Changing how LaTeX works}
+\paragraph{\texttt{babel}} is to change how LaTeX deals with language-specific typesetting (hyphenation, punctuation, quotations, localisation, etc.). Different languages have different rules, so it’s important to tell LaTeX which one to use. 
+
+This is a lot of filler which is going to demonstrate how LaTeX hyphenates
+material, and which will be able to give us at least one hyphenation point.
+This is a lot of filler which is going to demonstrate how LaTeX hyphenates
+material, and which will be able to give us at least one hyphenation point.
+
+\section{Changing design}
+\paragraph{\texttt{geometry}} It’s useful to be able to adjust some aspects of design independent of the document class. The most obvious one are the page margins. For that we use \texttt{geometry}.
+
+\section{Defining commands}
+Sometimes you need a command specific to your document, either some functionality not found in the available packages or simply a command to enter a common expression that is used multiple times.
+
+\begin{verbatim}
+    \newcommand\kw[1]{\textbf{\itshape #1}}
+\end{verbatim}
+
+In the definition \texttt{[1]} denotes the number of arguments (here one) and \texttt{\#1} denotes the first argument that is supplied (apples or oranges in this example). You may have up to nine arguments, but it is usually best to have just one argument, or sometimes none at all.
+
+\paragraph{Usage} I like \kw{cats}. I like \blue{cats}.
+
+\section{Exercises}
+\subsection{Generate code in green}
+Use the command below
+
+\begin{verbatim}
+    \newcommand{\greencode}[1]{\textcolor{teal}{\texttt{#1}}}
+\end{verbatim}
+
+\paragraph{Usage} \greencode{int x = 3;}
+
+\subsection{Creating a command without arguments}
+Use the command below
+
+\begin{verbatim}
+    \newcommand{\printerror}{\textcolor{red}{ERROR}}
+\end{verbatim}
+
+\paragraph{Usage} \printerror
+\end{document}
+% End Lesson 6 (Nov 1 2024)===

@@ -1,0 +1,114 @@
+% ===Lesson 10: Mathematics
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{soul}
+\usepackage{verbatim}
+\usepackage{indentfirst}
+\usepackage{hyperref}
+\usepackage{amsmath}
+
+\begin{document}
+\hl{This lesson presents LaTeX’s math mode and how you can type inline and display formulas, the extensions provided by the amsmath package, and how to change fonts in math.}
+\vspace{0.5cm}
+
+Typesetting complex mathematics is one of the greatest strengths of LaTeX. You can mark up mathematics in a logical way in what is known as ‘math mode’.
+
+\section{Math mode}
+In math mode, spaces are ignored and the correct spacing between characters is (almost always) applied. There are two forms of math mode:
+
+\begin{itemize}
+    \item inline: using \verb|$<math_notation>$| or \verb|\(<math_notation>\)|
+    \item display: using \verb|$$<math_notation>$$| or \verb|\[<math_notation>\]|
+\end{itemize}
+\vspace{0.5cm}
+
+Here is an inline math: $x + 1 = y$. And here is a display math: $$x + 1 = y$$
+
+You can look up commands for math mode symbols using the \href{https://detexify.kirelabs.org/classify.html}{Detexify} tool.
+
+\section{Display mathematics}
+Display math mode is set centered by default and is meant for larger equations that are \textbf{‘part of a paragraph’}. Note that display math environments do not allow a paragraph to end within the mathematics, so you may not have blank lines within the source of the display.
+
+The paragraph should always be started before the display so do not leave a blank line before the display math environment. If you need several lines of mathematics, do not use consecutive display math environments (this produces inconsistent spacing); use one of the multi-line display environments such as \verb|align| from the \verb|amsmath| package described later.
+
+\begin{verbatim}
+A paragraph about a larger equation
+\[
+\int_{-\infty}^{+\infty} e^{-x^2} \, dx
+\]
+\end{verbatim}
+
+A paragraph about a larger equation
+\[
+\int_{-\infty}^{+\infty} e^{-x^2} \, dx
+\]
+
+You often want a numbered equation, which is created using the equation environment. Let’s try the same example again:
+
+\begin{verbatim}
+A paragraph about a larger equation
+\begin{equation}
+\int_{-\infty}^{+\infty} e^{-x^2} \, dx
+\end{equation}
+\end{verbatim}
+
+\section{The \texttt{amsmath} package}
+Mathematical notation is very rich, and this means that the tools built into the LaTeX kernel can’t cover everything. The \verb|amsmath| package extends the core support to cover a lot more ideas.
+
+\begin{verbatim}
+Solve the following recurrence for $ n,k\geq 0 $:
+\begin{align*}
+  Q_{n,0} &= 1   \quad Q_{0,k} = [k=0];  \\
+  Q_{n,k} &= Q_{n-1,k}+Q_{n-1,k-1}+\binom{n}{k}, \quad\text{for $n$, $k>0$.}
+\end{align*}
+\end{verbatim}
+
+Solve the following recurrence for $ n,k\geq 0 $:
+\begin{align*}
+  Q_{n,0} &= 1   \quad Q_{0,k} = [k=0];  \\
+  Q_{n,k} &= Q_{n-1,k}+Q_{n-1,k-1}+\binom{n}{k}, \quad\text{for $n$, $k>0$.}
+\end{align*}
+
+The \verb|align*| environment makes the equations line up on the ampersands, the \& symbols, just like a table. Notice how we’ve used \verb|\quad| to insert a bit of space, and \verb|\text| to put some normal text inside math mode. We’ve also used another math mode command, \verb|\binom|, for a binomial.
+
+Notice that here we used \verb|align*|, and the equation didn’t come out numbered. Most math environments number the equations by default, and the starred variant (with a \verb|*|) disables numbering.
+\vspace{0.5cm}
+
+The package also has several other convenient environments, for example for matrices.
+
+AMS matrices.
+\[
+\begin{matrix}
+a & b & c \\
+d & e & f
+\end{matrix}
+\quad
+\begin{pmatrix}
+a & b & c \\
+d & e & f
+\end{pmatrix}
+\quad
+\begin{bmatrix}
+a & b & c \\
+d & e & f
+\end{bmatrix}
+\]
+
+\section{Fonts in math mode}
+Unlike normal text, font changes in math mode often convey very specific meaning. They are therefore often written explicitly. There are a set of commands you need here:
+
+\begin{itemize}
+    \item \verb|\mathrm|: roman (upright)
+    \item \verb|\mathit|: italic spaced as ‘text’
+    \item \verb|\mathbf|: boldface
+    \item \verb|\mathsf|: sans serif
+    \item \verb|\mathtt|: monospaced (typewriter)
+    \item \verb|\mathbb|: double-struck (blackboard bold) (provided by the amsfonts package)
+\end{itemize}
+
+Each of these takes Latin letters as an argument, so for example we might write a matrix as $\mathbf{M}$.
+\end{document}
+% End Lesson 10 (Nov 5 2024)===

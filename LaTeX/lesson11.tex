@@ -1,0 +1,102 @@
+% ===Lesson 11: Formatting: fonts and spacing
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{verbatim}
+\usepackage{xcolor}
+\usepackage{soul}
+\usepackage[parfill]{parskip}
+\usepackage{lipsum}
+
+\begin{document}
+\hl{This lesson shows how to change the spacing elements in a document and how to add explicit formatting instructions to the LaTeX source.}
+\vspace{0.5cm}
+
+We have already seen that a blank line in your input will generate a new paragraph in LaTeX. This shows up as the paragraph will start with an indent.
+
+\section{Paragraph spacing}
+
+One common style is to have no indents for paragraphs, but instead to have a ‘blank line’ between them. We can achieve that using the \verb|parskip| package.
+
+\begin{verbatim}
+\usepackage[parfill]{parskip}
+\usepackage{lipsum} % Just for some filler text
+\begin{document}
+\lipsum
+\end{document}    
+\end{verbatim}
+
+\lipsum
+
+\section{Forcing a new line}
+Most of the time, you should not force a new line in LaTeX: you almost certainly want a new paragraph or to use parskip, as we’ve just seen, to put a ‘blank line’ between paragraphs.
+
+There are a few places where you use \verb|\\| to start a new line without starting a new paragraph:
+
+\begin{itemize}
+    \item At the end of table rows
+    \item Inside the center environment
+    \item In poetry (the verse environment)
+\end{itemize}
+
+Almost always, if you are not in one of those special places, you should not use \verb|\\|.
+
+\section{Adding explicit space}
+We can insert a thin space (about half the normal thickness) using \verb|\,|. In math mode, there are also other commands: \verb|\.|, \verb|\:| and \verb|\;|, and one for a negative space: \verb|\!|.
+
+Very rarely, for example when creating a title page, you might need to add explicit horizontal or vertical space. We can use \verb|\hspace| and \verb|\vspace| for that.
+
+\section{Explicit text formatting}
+We wrote in lesson 3 that most of the time logical structure is preferable. But sometimes you want to make text bold, or italic, or monospaced, etc. There are two types of command for this: ones for short pieces of text, and ones for ‘running’ material.
+
+For short bits of text, we use \verb|\textbf|, \verb|\textit|, \verb|\textrm|, \verb|\textsf|, \verb|\texttt| and \verb|\textsc|.
+
+For running text, we use commands that alter the font setup; the commands here are for example \verb|\bfseries| and \verb|\itshape|. Because these don’t ‘stop’, we need to place them in a group if we want to prevent them from applying to the whole document. LaTeX environments are groups, as are table cells, or we can use \{...\} to make an explicit group.
+
+\newpage
+\begin{verbatim}
+\begin{document}
+Normal text.
+
+{\itshape
+
+This text is italic.
+
+So is this: the effect is not limited to a paragraph.
+
+}
+\end{document}
+\end{verbatim}
+\vspace{0.5cm}
+\hrule
+
+Normal text.
+
+{\itshape
+
+This text is italic.
+
+So is this: the effect is not limited to a paragraph.
+
+}
+\hrule
+\vspace{0.5cm}
+
+We can set font size in a similar way; these commands all work on an ongoing basis. The sizes we set are relative: \verb|\huge|, \verb|\large|, \verb|\normalsize|, \verb|\small| and \verb|\footnotesize| are common. It’s important to finish a paragraph before changing the font size back; see how we add an explicit \verb|\par| (paragraph break) here.
+
+\begin{verbatim}
+\begin{center}
+{\itshape\large Some text\par}
+Normal text
+{\bfseries\small Much smaller text\par}
+\end{center}
+\end{verbatim}
+
+\begin{center}
+{\itshape\large Some text\par}
+Normal text
+{\bfseries\small Much smaller text\par}
+\end{center}
+
+\end{document}
+% End Lesson 11 (Nov 6 2024)===

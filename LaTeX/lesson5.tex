@@ -1,0 +1,28 @@
+% ===Lesson 5: Document Classes
+\documentclass{article}
+\usepackage[T1]{fontenc}
+
+\begin{document}
+\section{What a document class does}
+The document class sets up the general layout of the document, for example
+
+\begin{itemize}
+    \item design: margins, fonts, spacing, etc.
+    \item whether chapters are available
+    \item if the title should be on a separate page
+\end{itemize}
+
+\section{The base classes}
+LaTeX is supplied with a set of standard classes, all of which look similar but with some variations:
+
+\begin{itemize}
+    \item \texttt{article}: short documents without chapters
+    \item \texttt{report}: longer documents with chapters, single-sided printing
+    \item \texttt{book}: longer documents with chapters, double-sided printing, with front- and back-matter (for example an index)
+    \item \texttt{letter}: correspondence with no sections
+    \item \texttt{slides}: for presentations (but see below)
+\end{itemize}
+
+The standard article, report and book classes take the options 10pt, 11pt and 12pt to change font size, and twocolumn to make a two-column document.
+\end{document}
+% End Lesson 5 (Nov 1 2024)===
